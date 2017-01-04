@@ -19,26 +19,28 @@
             openxu:mMonthRowR="@drawable/custom_calendar_row_right"
             openxu:mMonthRowSpac="20dip"
 
-            openxu:mTextSizeMonth="22sp"
+            openxu:mTextSizeMonth="20sp"
             openxu:mTextSizeWeek="17sp"
             openxu:mTextSizeDay="17sp"
             openxu:mTextSizePre="10sp"
 
-            openxu:mTextColorMonth="#6E6E6E"
-            openxu:mTextColorWeek="#aa7a7a"
-            openxu:mTextColorDay="#A4A4A4"
-            openxu:mTextColorPreFinish="#5CBB8C"
-            openxu:mTextColorPreUnFinish="#ff6634"
+            openxu:mTextColorMonth="#4b4b4b"
+            openxu:mTextColorWeek="#9e9e9d"
+            openxu:mSelectWeekTextColor="#f67633"
+            openxu:mTextColorDay="#686768"
+            openxu:mTextColorPreFinish="#fc7451"
+            openxu:mTextColorPreUnFinish="#60ba8d"
+            openxu:mTextColorPreNull="#cecdcd"
             openxu:mSelectTextColor="#ffffff"
 
-            openxu:mMonthSpac="8dip"
-            openxu:mLineSpac="10dip"
-            openxu:mTextSpac="6dip"
+            openxu:mMonthSpac="10dip"
+            openxu:mLineSpac="12dip"
+            openxu:mTextSpac="8dip"
 
             openxu:mCurrentBg="#6E6E6E"
             openxu:mCurrentBgStrokeWidth="1.5dip"
             openxu:mCurrentBgDashPath="@array/customCalendar_currentDay_bg_DashPath"
-            openxu:mSelectBg="#ff6634"
+            openxu:mSelectBg="#fe7f5c"
             openxu:mSelectRadius="15dip" />
 
 

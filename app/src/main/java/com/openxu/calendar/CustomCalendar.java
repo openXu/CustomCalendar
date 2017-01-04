@@ -46,13 +46,13 @@ public class CustomCalendar extends View{
     private float mMonthRowSpac;
     private float mMonthSpac;
     /** 星期的颜色、大小*/
-    private int mTextColorWeek;
+    private int mTextColorWeek, mSelectWeekTextColor;
     private float mTextSizeWeek;
     /** 日期文本的颜色、大小*/
     private int mTextColorDay;
     private float mTextSizeDay;
     /** 任务次数文本的颜色、大小*/
-    private int mTextColorPreFinish, mTextColorPreUnFinish;
+    private int mTextColorPreFinish, mTextColorPreUnFinish, mTextColorPreNull;
     private float mTextSizePre;
     /** 选中的文本的颜色*/
     private int mSelectTextColor;
@@ -76,8 +76,9 @@ public class CustomCalendar extends View{
     private boolean isCurrentMonth;       //展示的月份是否是当前月
     private int currentDay, selectDay, lastSelectDay;    //当前日期 、 选中的日期 、上一次选中的日期（避免造成重复回调请求）
 
-    private int dayOfMonth;   //月份天数
-    private int firstIndex;   //当月第一天位置索引
+    private int dayOfMonth;    //月份天数
+    private int firstIndex;    //当月第一天位置索引
+    private int todayWeekIndex;//今天是星期几
     private int firstLineNum, lastLineNum; //第一行、最后一行能展示多少日期
     private int lineNum;      //日期行数
     private String[] WEEK_STR = new String[]{"Sun", "Mon", "Tues", "Wed", "Thur", "Fri", "Sat", };
@@ -106,11 +107,14 @@ public class CustomCalendar extends View{
         mTextSizeMonth = a.getDimension(R.styleable.CustomCalendar_mTextSizeMonth, 100);
         mMonthSpac = a.getDimension(R.styleable.CustomCalendar_mMonthSpac, 20);
         mTextColorWeek = a.getColor(R.styleable.CustomCalendar_mTextColorWeek, Color.BLACK);
+        mSelectWeekTextColor = a.getColor(R.styleable.CustomCalendar_mSelectWeekTextColor, Color.BLACK);
+
         mTextSizeWeek = a.getDimension(R.styleable.CustomCalendar_mTextSizeWeek, 70);
         mTextColorDay = a.getColor(R.styleable.CustomCalendar_mTextColorDay, Color.GRAY);
         mTextSizeDay = a.getDimension(R.styleable.CustomCalendar_mTextSizeDay, 70);
         mTextColorPreFinish = a.getColor(R.styleable.CustomCalendar_mTextColorPreFinish, Color.BLUE);
         mTextColorPreUnFinish = a.getColor(R.styleable.CustomCalendar_mTextColorPreUnFinish, Color.BLUE);
+        mTextColorPreNull  = a.getColor(R.styleable.CustomCalendar_mTextColorPreNull, Color.BLUE);
         mTextSizePre = a.getDimension(R.styleable.CustomCalendar_mTextSizePre, 40);
         mSelectTextColor = a.getColor(R.styleable.CustomCalendar_mSelectTextColor, Color.YELLOW);
         mCurrentBg = a.getColor(R.styleable.CustomCalendar_mCurrentBg, Color.GRAY);
@@ -174,6 +178,7 @@ public class CustomCalendar extends View{
         calendar.setTime(new Date());
         //获取今天是多少号
         currentDay = calendar.get(Calendar.DAY_OF_MONTH);
+        todayWeekIndex = calendar.get(Calendar.DAY_OF_WEEK)-1;
 
         Date cM = str2Date(getMonthStr(new Date()));
         //判断是否为当月
@@ -260,8 +265,13 @@ public class CustomCalendar extends View{
         canvas.drawRect(rect, bgPaint);
         //绘制星期：七天
         mPaint.setTextSize(mTextSizeWeek);
-        mPaint.setColor(mTextColorWeek);
+
         for(int i = 0; i < WEEK_STR.length; i++){
+            if(todayWeekIndex == i && isCurrentMonth){
+                mPaint.setColor(mSelectWeekTextColor);
+            }else{
+                mPaint.setColor(mTextColorWeek);
+            }
             int len = (int)FontUtil.getFontlength(mPaint, WEEK_STR[i]);
             int x = i * columnWidth + (columnWidth - len)/2;
             canvas.drawText(WEEK_STR[i], x, titleHeight + FontUtil.getFontLeading(mPaint), mPaint);
@@ -356,18 +366,36 @@ public class CustomCalendar extends View{
             mPaint.setTextSize(mTextSizePre);
             MainActivity.DayFinish finish = map.get(day);
             String preStr = "0/0";
-            if(finish!=null){
-                //区分完成未完成
-                if(finish.finish >= finish.all) {
-                    mPaint.setColor(mTextColorPreFinish);
-                }else{
-                    mPaint.setColor(mTextColorPreUnFinish);
-                }
-                preStr = finish.finish+"/"+finish.all;
+            if(isCurrentMonth){
+                if(day>currentDay){
+                    mPaint.setColor(mTextColorPreNull);
+                }else if(finish!=null){
+                    //区分完成未完成
+                    if(finish.finish >= finish.all) {
+                        mPaint.setColor(mTextColorPreFinish);
+                    }else{
+                        mPaint.setColor(mTextColorPreUnFinish);
+                    }
+                    preStr = finish.finish+"/"+finish.all;
 
+                }else{
+                    mPaint.setColor(mTextColorPreNull);
+                }
             }else{
-                mPaint.setColor(mTextColorPreUnFinish);
+                if(finish!=null){
+                    //区分完成未完成
+                    if(finish.finish >= finish.all) {
+                        mPaint.setColor(mTextColorPreFinish);
+                    }else{
+                        mPaint.setColor(mTextColorPreUnFinish);
+                    }
+                    preStr = finish.finish+"/"+finish.all;
+
+                }else{
+                    mPaint.setColor(mTextColorPreNull);
+                }
             }
+
             len = (int)FontUtil.getFontlength(mPaint, preStr);
             x = left + (columnWidth - len)/2;
             canvas.drawText(preStr, x, topPre + mTextSpac + preTextLeading, mPaint);
