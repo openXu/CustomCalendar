@@ -20,6 +20,7 @@ public class MainActivity extends AppCompatActivity {
         cal = (CustomCalendar)findViewById(R.id.cal);
 
 
+        //TODO 模拟请求当月数据
         final List<DayFinish> list = new ArrayList<>();
         list.add(new DayFinish(1,2,2));
         list.add(new DayFinish(2,1,2));
@@ -53,7 +54,7 @@ public class MainActivity extends AppCompatActivity {
         list.add(new DayFinish(30,2,2));
         list.add(new DayFinish(31,2,2));
 
-//        cal.setRenwu("2017年1月", list);
+        cal.setRenwu("2017年1月", list);
         cal.setOnClickListener(new CustomCalendar.onClickListener() {
             @Override
             public void onLeftRowClick() {

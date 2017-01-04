@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <declare-styleable name="CustomCalendar">
-
         <!--这四个颜色分别是月份、星期、日期、任务的背景色，只是方便调试测量时使用，正式试用时可配置透明色-->
         <attr name="mBgMonth" format="color" />
         <attr name="mBgWeek" format="color" />

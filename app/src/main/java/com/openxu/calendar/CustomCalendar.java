@@ -135,7 +135,7 @@ public class CustomCalendar extends View{
         initCompute();
 
     }
-    /**计算相关常量*/
+    /**计算相关常量，构造方法中调用*/
     private void initCompute(){
         mPaint = new Paint();
         bgPaint = new Paint();
@@ -162,25 +162,29 @@ public class CustomCalendar extends View{
         //默认当前月份
         String cDateStr = getMonthStr(new Date());
 //        cDateStr = "2015年08月";
-        setMonth(cDateStr, true);
-
+        setMonth(cDateStr);
     }
 
     /**设置月份*/
-    private void setMonth(String Month, boolean isInit){
+    private void setMonth(String Month){
+        //设置的月份（2017年01月）
         month = str2Date(Month);
-        Date cM = str2Date(getMonthStr(new Date()));
-        if(cM.getTime() == month.getTime()){
-            isCurrentMonth = true;
-        }else{
-            isCurrentMonth = false;
-        }
+
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(new Date());
+        //获取今天是多少号
         currentDay = calendar.get(Calendar.DAY_OF_MONTH);
-        selectDay = isInit?currentDay:0;
-        Log.d(TAG, "设置月份："+month+"   今天"+currentDay+"号, 是否为当前月："+isCurrentMonth);
 
+        Date cM = str2Date(getMonthStr(new Date()));
+        //判断是否为当月
+        if(cM.getTime() == month.getTime()){
+            isCurrentMonth = true;
+            selectDay = currentDay;//当月默认选中当前日
+        }else{
+            isCurrentMonth = false;
+            selectDay = 0;
+        }
+        Log.d(TAG, "设置月份："+month+"   今天"+currentDay+"号, 是否为当前月："+isCurrentMonth);
         calendar.setTime(month);
         dayOfMonth = calendar.getActualMaximum(Calendar.DAY_OF_MONTH);
         //第一行1号显示在什么位置（星期几）
@@ -237,7 +241,7 @@ public class CustomCalendar extends View{
         float textStart = (getWidth() - textLen)/ 2;
         canvas.drawText(getMonthStr(month), textStart,
                 mMonthSpac+FontUtil.getFontLeading(mPaint), mPaint);
-
+        /*绘制左右箭头*/
         Bitmap bitmap = BitmapFactory.decodeResource(getResources(), mMonthRowL);
         int h = bitmap.getHeight();
         rowWidth = bitmap.getWidth();
@@ -247,7 +251,6 @@ public class CustomCalendar extends View{
         bitmap = BitmapFactory.decodeResource(getResources(), mMonthRowR);
         rowRStart = (int)(textStart+textLen);
         canvas.drawBitmap(bitmap, rowRStart+mMonthRowSpac, (titleHeight - h)/2, new Paint());
-
     }
     /**绘制绘制星期*/
     private void drawWeek(Canvas canvas){
@@ -266,6 +269,7 @@ public class CustomCalendar extends View{
     }
     /**绘制日期和次数*/
     private void drawDayAndPre(Canvas canvas){
+        //某行开始绘制的Y坐标，第一行开始的坐标为标题高度+星期部分高度
         float top = titleHeight+weekHeight;
         //行
         for(int line = 0; line < lineNum; line++){
@@ -501,17 +505,15 @@ public class CustomCalendar extends View{
             setSelectedDay(selectDay, true);
         }
     }
-
+    /**设置选中的日期*/
     private void setSelectedDay(int day, boolean eventEnd){
         Log.w(TAG, "选中："+day+"  事件是否结束"+eventEnd);
         selectDay = day;
         invalidate();
-
         if(listener!=null && eventEnd && responseWhenEnd && lastSelectDay!=selectDay) {
             lastSelectDay = selectDay;
             listener.onDayClick(selectDay, getMonthStr(month) + selectDay + "日", map.get(selectDay));
         }
-
         responseWhenEnd = !eventEnd;
     }
 
@@ -523,7 +525,7 @@ public class CustomCalendar extends View{
     /***********************接口API↓↓↓↓↓↓↓**************************/
     private Map<Integer, MainActivity.DayFinish> map;
     public void setRenwu(String month, List<MainActivity.DayFinish> list){
-        setMonth(month, false);
+        setMonth(month);
 
         if(list!=null && list.size()>0){
             map.clear();
@@ -547,7 +549,7 @@ public class CustomCalendar extends View{
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(month);
         calendar.add(Calendar.MONTH, change);
-        setMonth(getMonthStr(calendar.getTime()), false);
+        setMonth(getMonthStr(calendar.getTime()));
         map.clear();
         invalidate();
     }
