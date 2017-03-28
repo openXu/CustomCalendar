@@ -548,7 +548,11 @@ public class CustomCalendar extends View{
     /****************************事件处理↑↑↑↑↑↑↑****************************/
 
 
-
+    @Override
+    public void invalidate() {
+        requestLayout();
+        super.invalidate();
+    }
 
     /***********************接口API↓↓↓↓↓↓↓**************************/
     private Map<Integer, MainActivity.DayFinish> map;
